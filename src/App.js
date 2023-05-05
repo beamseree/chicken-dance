@@ -20,8 +20,6 @@ import Result from "./components/Result";
 import arrowcontainerleft from "./img/arrowcontainerleft.png";
 import arrowcontainerright from "./img/arrowcontainerright.png";
 
-import cursoridle from "./img/cursor/cursor_idle.png";
-import cursorclick from "./img/cursor/cursor_click.png";
 import StartScreen from "./components/StartScreen";
 import Fail from "./components/Fail";
 
@@ -31,9 +29,6 @@ bgm.loop = true;
 
 function App() {
     const appRef = useRef();
-
-    const [cursor, setCursor] = useState(cursoridle);
-    const cursorRef = useRef(cursor);
 
     const [arrowPattern, setArrowPattern] = useState([]);
 
@@ -281,16 +276,10 @@ function App() {
     };
 
     useEffect(() => {
-        appRef.current.addEventListener("mousedown", handleClick);
-        appRef.current.addEventListener("mouseup", handleUnclick);
         document.addEventListener("keydown", handleArrow);
-        appRef.current.addEventListener("mousemove", moveCursor);
         // setCountdown(true);
 
         return () => {
-            appRef.current.removeEventListener("mousedown", handleClick);
-            appRef.current.removeEventListener("mouseup", handleUnclick);
-            appRef.current.removeEventListener("mousemove", moveCursor);
             document.removeEventListener("keydown", handleArrow);
         };
     }, []);
@@ -301,32 +290,11 @@ function App() {
         return `${seconds}.${milliseconds.toString().substring(0, 2)}`;
     };
 
-    const moveCursor = (e) => {
-        const divRect = appRef.current.getBoundingClientRect();
-
-        const mouseY = e.clientY - divRect.top - 4;
-        const mouseX = e.clientX - divRect.left - 4;
-
-        cursorRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-    };
-
-    const handleClick = (event) => {
-        setCursor(cursorclick);
-        // Perform any action you'd like to do when a click occurs
-    };
-
-    const handleUnclick = (event) => {
-        setCursor(cursoridle);
-        // Perform any action you'd like to do when a click occurs
-    };
-
     return (
         <div className="App">
             <img src={bgimg} alt="" className="bg-blur" />
 
             <div className="chicken-dance" ref={appRef}>
-                <img className="cursor" src={cursor} alt="" ref={cursorRef} />
-
                 <img className="background" src={bgimg} alt="" />
 
                 <StartScreen setCountdown={setCountdown} bgm={bgm} />

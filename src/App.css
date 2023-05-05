@@ -40,9 +40,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: none;
+  cursor: url(./img/cursor/cursor_idle.png), auto;
   overflow: hidden;
   border: 1px solid white;
+}
+
+.chicken-dance:active {
+  cursor: url(./img/cursor/cursor_click.png), auto;
 }
 
 .background {
@@ -300,14 +304,6 @@
 
 .countdown.hide {
   display: none;
-}
-
-.cursor {
-  position: absolute;
-  z-index: 999999;
-  top: 0;
-  left: 0;
-  pointer-events: none;
 }
 
 .start-screen {
