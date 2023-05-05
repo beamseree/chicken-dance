@@ -70,8 +70,15 @@ function App() {
 
     const [spawnRooster, setSpawnRooster] = useState(false);
 
+    const [isPlaying, setIsPlaying] = useState(false);
+    const isPlayingRef = useRef(isPlaying);
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
+
     const startGame = () => {
         setStage(0);
+        setIsPlaying(true);
         createArrowPattern(stage);
         setArrowIndex(0);
         setArrowStatus([]);
@@ -121,16 +128,21 @@ function App() {
             case 9:
                 arrowNum = 10;
                 break;
+            case 10:
+                arrowNum = 10;
+                break;
             default:
                 arrowNum = 4;
                 break;
         }
-        for (let i = 0; i < arrowNum; i++) {
-            const arrow = Math.floor(Math.random() * 4);
-            arrowPatternTemp.push(arrow);
-        }
+        if (stage !== 10) {
+            for (let i = 0; i < arrowNum; i++) {
+                const arrow = Math.floor(Math.random() * 4);
+                arrowPatternTemp.push(arrow);
+            }
 
-        setArrowPattern(arrowPatternTemp);
+            setArrowPattern(arrowPatternTemp);
+        } 
     };
 
     const checkArrow = (arrow) => {
@@ -144,8 +156,9 @@ function App() {
                     setStage(stageRef.current + 1);
                     setTimeout(() => {
                         // alert("You win!");
+                        setIsPlaying(false);
                         setClear(true);
-                        endGame();
+                        // endGame();
                     }, 100);
                     // setStage(0);
                     // setArrowIndex(0);
@@ -177,14 +190,17 @@ function App() {
         setCountdown(false);
         setStage(0);
         setArrowIndex(0);
-        setArrowPattern([]);
         setArrowStatus([]);
         setSpawnRooster(false);
-        uiRef.current.classList.add("hide");
-        arrowRef.current.classList.add("hide");
+        // setArrowPattern([]);
+        // uiRef.current.classList.add("hide");
+        // arrowRef.current.classList.add("hide");
     };
 
     const handleArrow = (event) => {
+        if (!isPlayingRef.current) {
+            return;
+        }
         switch (event.key) {
             case "ArrowUp":
                 event.preventDefault();
@@ -250,7 +266,7 @@ function App() {
         if (time <= 0) {
             clearInterval(timer);
             // alert("You lose!");
-            endGame()
+            endGame();
         }
     }, [time]);
 
@@ -283,7 +299,7 @@ function App() {
 
             <img className="background" src={bgimg} alt="" />
 
-            <StartScreen setCountdown={setCountdown} bgm={bgm}/>
+            <StartScreen setCountdown={setCountdown} bgm={bgm} />
 
             <div ref={uiRef} className="ui-container hide">
                 <img className="ui-img" src={ui} alt="" />

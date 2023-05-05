@@ -51,7 +51,7 @@ const Clear = (props) => {
                         return clear;
                 }
             });
-        }, 110);
+        }, 125);
     };
 
     useEffect(() => {
