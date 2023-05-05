@@ -100,26 +100,23 @@ function App() {
         setArrowIndex(0);
         setArrowStatus([]);
         arrowRef.current.classList.remove("hide");
-        setTimeout(() => {
-            uiRef.current.classList.remove("none");
-            setTime(60000);
-            uiRef.current.classList.remove("hide");
-            setSpawnRooster(true);
+        uiRef.current.classList.remove("none");
+        uiRef.current.classList.remove("hide");
+        setSpawnRooster(true);
 
-            const timer = setInterval(() => {
-                setTime((prevTime) => prevTime - 10);
-                if (timeRef.current <= 0 && isPlayingRef.current) {
-                    clearInterval(timer);
-                    setTime(0.0);
-                    setDidClear(false);
-                    setResultTime(0);
-                    setFail(true);
-                    endGame();
-                } else if (resultRef.current) {
-                    clearInterval(timer);
-                }
-            }, 10);
-        }, 200);
+        const timer = setInterval(() => {
+            setTime((prevTime) => prevTime - 10);
+            if (timeRef.current <= 0 && isPlayingRef.current) {
+                clearInterval(timer);
+                setTime(0.0);
+                setDidClear(false);
+                setResultTime(0);
+                setFail(true);
+                endGame();
+            } else if (resultRef.current) {
+                clearInterval(timer);
+            }
+        }, 10);
     };
 
     const createArrowPattern = (stage) => {
