@@ -23,6 +23,7 @@ import arrowcontainerright from "./img/arrowcontainerright.png";
 import cursoridle from "./img/cursor/cursor_idle.png";
 import cursorclick from "./img/cursor/cursor_click.png";
 import StartScreen from "./components/StartScreen";
+import Fail from "./components/Fail";
 
 const bgm = new Audio(bg);
 bgm.volume = 0.1;
@@ -69,9 +70,18 @@ function App() {
 
     const [start, setStart] = useState(false);
     const [clear, setClear] = useState(false);
+    const [fail, setFail] = useState(false);
     const [countdown, setCountdown] = useState(false);
 
     const [spawnRooster, setSpawnRooster] = useState(false);
+
+    const [resultTime, setResultTime] = useState(60000);
+    const [result, setResult] = useState(false);
+    const resultRef = useRef(result);
+    useEffect(() => {
+        resultRef.current = result;
+    }, [result]);
+    const [didClear, setDidClear] = useState(false);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const isPlayingRef = useRef(isPlaying);
@@ -81,25 +91,30 @@ function App() {
 
     const startGame = () => {
         arrowRef.current.classList.remove("none");
+        setTime(60000);
         setStage(0);
+        createArrowPattern(0);
         setIsPlaying(true);
-        createArrowPattern(stage);
         setArrowIndex(0);
         setArrowStatus([]);
         arrowRef.current.classList.remove("hide");
         setTimeout(() => {
             uiRef.current.classList.remove("none");
-            setTime(5000);
+            setTime(60000);
             uiRef.current.classList.remove("hide");
             setSpawnRooster(true);
 
             const timer = setInterval(() => {
                 setTime((prevTime) => prevTime - 5);
-                if (timeRef.current <= 0) {
+                if (timeRef.current <= 0 && isPlayingRef.current) {
                     clearInterval(timer);
                     setTime(0.0)
-                    // alert("You lose!");
+                    setDidClear(false);
+                    setResultTime(0)
+                    setFail(true);
                     endGame();
+                } else if (resultRef.current) {
+                    clearInterval(timer);
                 }
             }, 10);
         }, 200);
@@ -168,8 +183,10 @@ function App() {
                     setTimeout(() => {
                         // alert("You win!");
                         setIsPlaying(false);
+                        setDidClear(true);
                         setClear(true);
-                        // endGame();
+                        setResultTime(timeRef.current)
+                        endGame();
                     }, 100);
                     // setStage(0);
                     // setArrowIndex(0);
@@ -196,19 +213,20 @@ function App() {
     };
 
     const endGame = () => {
+        setIsPlaying(false);
         setStart(false);
         setCountdown(false);
-        setStage(0);
         setArrowIndex(0);
-        setArrowStatus([]);
         setTimeout(() => {
             uiRef.current.classList.add("hide");
             arrowRef.current.classList.add("hide");
             setTimeout(() => {
                 setSpawnRooster(false);
                 setArrowPattern([]);
+                setArrowStatus([]);
                 uiRef.current.classList.add("none");
                 arrowRef.current.classList.add("none");
+                setResult(true)
             }, 800);
         }, 2000);
     };
@@ -329,7 +347,7 @@ function App() {
                 <img src={arrowcontainerright} alt="" className="arrow-edge" />
             </div>
 
-            {/* <Result /> */}
+            <Result didClear={didClear} resultTime={formatTime(resultTime)} result={result} stage={stage} setCountdown={setCountdown} setResult={setResult}/>
 
             <img src={frito} alt="" className="frito" />
             {spawnRooster && (
@@ -345,6 +363,7 @@ function App() {
 
             <Start start={start} setStart={setStart} startGame={startGame} />
             <Clear clear={clear} setClear={setClear} />
+            <Fail fail={fail} setFail={setFail} />
             <Countdown
                 countdown={countdown}
                 setCountdown={setCountdown}
