@@ -56,7 +56,10 @@ function App() {
     }, [arrowIndex]);
 
     const [time, setTime] = useState(60000);
-    let timer;
+    const timeRef = useRef(time);
+    useEffect(() => {
+        timeRef.current = time;
+    }, [time]);
 
     const [arrowStatus, setArrowStatus] = useState([]);
     const arrowStatusRef = useRef(arrowStatus);
@@ -77,6 +80,7 @@ function App() {
     }, [isPlaying]);
 
     const startGame = () => {
+        arrowRef.current.classList.remove("none");
         setStage(0);
         setIsPlaying(true);
         createArrowPattern(stage);
@@ -84,12 +88,19 @@ function App() {
         setArrowStatus([]);
         arrowRef.current.classList.remove("hide");
         setTimeout(() => {
-            setTime(60000);
+            uiRef.current.classList.remove("none");
+            setTime(5000);
             uiRef.current.classList.remove("hide");
             setSpawnRooster(true);
 
             const timer = setInterval(() => {
                 setTime((prevTime) => prevTime - 5);
+                if (timeRef.current <= 0) {
+                    clearInterval(timer);
+                    setTime(0.0)
+                    // alert("You lose!");
+                    endGame();
+                }
             }, 10);
         }, 200);
     };
@@ -185,16 +196,21 @@ function App() {
     };
 
     const endGame = () => {
-        clearInterval(timer);
         setStart(false);
         setCountdown(false);
         setStage(0);
         setArrowIndex(0);
         setArrowStatus([]);
-        setSpawnRooster(false);
-        // setArrowPattern([]);
-        // uiRef.current.classList.add("hide");
-        // arrowRef.current.classList.add("hide");
+        setTimeout(() => {
+            uiRef.current.classList.add("hide");
+            arrowRef.current.classList.add("hide");
+            setTimeout(() => {
+                setSpawnRooster(false);
+                setArrowPattern([]);
+                uiRef.current.classList.add("none");
+                arrowRef.current.classList.add("none");
+            }, 800);
+        }, 2000);
     };
 
     const handleArrow = (event) => {
@@ -262,14 +278,6 @@ function App() {
         };
     }, []);
 
-    useEffect(() => {
-        if (time <= 0) {
-            clearInterval(timer);
-            // alert("You lose!");
-            endGame();
-        }
-    }, [time]);
-
     const formatTime = (time) => {
         const seconds = Math.floor(time / 1000);
         const milliseconds = time % 1000;
@@ -301,13 +309,13 @@ function App() {
 
             <StartScreen setCountdown={setCountdown} bgm={bgm} />
 
-            <div ref={uiRef} className="ui-container hide">
+            <div ref={uiRef} className="ui-container none">
                 <img className="ui-img" src={ui} alt="" />
                 <p className="time">{formatTime(time)}</p>
                 <p className="stage">{stage}</p>
             </div>
 
-            <div className="arrow-container hide" ref={arrowRef}>
+            <div className="arrow-container none" ref={arrowRef}>
                 <img src={arrowcontainerleft} alt="" className="arrow-edge" />
                 <div className="arrow-inner">
                     {arrowPattern.map((arrow, index) => (

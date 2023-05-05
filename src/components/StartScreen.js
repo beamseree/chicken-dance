@@ -9,6 +9,9 @@ const StartScreen = (props) => {
         document.querySelector(".start-screen").classList.add("hide");
         props.setCountdown(true);
         props.bgm.play();
+        setTimeout(() => {
+            document.querySelector(".start-screen").classList.add("none");
+        }, 500);
     }
 
     return (
