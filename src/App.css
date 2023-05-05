@@ -10,17 +10,45 @@
 
 
 .App {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
-  min-height: 800px;
+  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+}
+
+.bg-blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.9;
+  filter: blur(5px);
+  z-index: -1;
+}
+
+.chicken-dance {
+  width: 1512px;
+  height: 833px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: none;
+  overflow: hidden;
+  border: 1px solid white;
 }
 
 .background {
   bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   object-position: bottom center;
@@ -28,6 +56,14 @@
   position: absolute;
   z-index: -1;
   pointer-events: none;
+}
+
+.frito {
+  position: absolute;
+  bottom: 125px;
+  height: 110px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 
@@ -193,14 +229,6 @@
   }
 }
 
-.frito {
-  position: absolute;
-  bottom: 125px;
-  height: 110px;
-  pointer-events: none;
-  z-index: 1;
-}
-
 .rooster {
   position: absolute;
   bottom: 125px;
@@ -284,12 +312,12 @@
 
 .start-screen {
   position: absolute;
-  width: 100vw;
   display: flex;
   justify-content: center;
   top: 150px;
   padding: 25px;
   transition: all 0.5s ease;
+  z-index: 2;
 }
 
 .start-screen.hide {
@@ -347,6 +375,7 @@
   width: 420px;
   top: 260px;
   transition: opacity 0.5s ease;
+  z-index: 2;
 }
 
 .result.hide {

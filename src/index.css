@@ -7,7 +7,7 @@
   -webkit-user-drag: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  cursor: none;
+  /* cursor: none; */
 }
 
 ::-webkit-scrollbar {
@@ -17,7 +17,7 @@
 html {
   overflow: hidden;
   height: 100%;
-  cursor: none;
+  /* cursor: none; */
 }
 
 body {
@@ -28,7 +28,18 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center; */
   /* cursor: url(http://www.rw-designer.com/cursor-extern.php?id=35050), auto; */
+}
+
+#root {
+  /* background-image: url(./img/chicken-dance-bg.png);
+  background-size: cover;
+  background-position: center; */
+  /* z-index: -1; */
 }
 
 code {

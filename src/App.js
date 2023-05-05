@@ -30,6 +30,8 @@ bgm.volume = 0.1;
 bgm.loop = true;
 
 function App() {
+    const appRef = useRef();
+
     const [cursor, setCursor] = useState(cursoridle);
     const cursorRef = useRef(cursor);
 
@@ -108,9 +110,9 @@ function App() {
                 setTime((prevTime) => prevTime - 5);
                 if (timeRef.current <= 0 && isPlayingRef.current) {
                     clearInterval(timer);
-                    setTime(0.0)
+                    setTime(0.0);
                     setDidClear(false);
-                    setResultTime(0)
+                    setResultTime(0);
                     setFail(true);
                     endGame();
                 } else if (resultRef.current) {
@@ -168,7 +170,7 @@ function App() {
             }
 
             setArrowPattern(arrowPatternTemp);
-        } 
+        }
     };
 
     const checkArrow = (arrow) => {
@@ -185,7 +187,7 @@ function App() {
                         setIsPlaying(false);
                         setDidClear(true);
                         setClear(true);
-                        setResultTime(timeRef.current)
+                        setResultTime(timeRef.current);
                         endGame();
                     }, 100);
                     // setStage(0);
@@ -226,7 +228,7 @@ function App() {
                 setArrowStatus([]);
                 uiRef.current.classList.add("none");
                 arrowRef.current.classList.add("none");
-                setResult(true)
+                setResult(true);
             }, 800);
         }, 2000);
     };
@@ -282,16 +284,16 @@ function App() {
     };
 
     useEffect(() => {
-        document.addEventListener("mousedown", handleClick);
-        document.addEventListener("mouseup", handleUnclick);
+        appRef.current.addEventListener("mousedown", handleClick);
+        appRef.current.addEventListener("mouseup", handleUnclick);
         document.addEventListener("keydown", handleArrow);
-        document.addEventListener("mousemove", moveCursor);
+        appRef.current.addEventListener("mousemove", moveCursor);
         // setCountdown(true);
 
         return () => {
-            document.removeEventListener("mousedown", handleClick);
-            document.removeEventListener("mouseup", handleUnclick);
-            document.removeEventListener("mousemove", moveCursor);
+            appRef.current.removeEventListener("mousedown", handleClick);
+            appRef.current.removeEventListener("mouseup", handleUnclick);
+            appRef.current.removeEventListener("mousemove", moveCursor);
             document.removeEventListener("keydown", handleArrow);
         };
     }, []);
@@ -303,8 +305,10 @@ function App() {
     };
 
     const moveCursor = (e) => {
-        const mouseY = e.clientY;
-        const mouseX = e.clientX;
+        const divRect = appRef.current.getBoundingClientRect();
+
+        const mouseY = e.clientY - divRect.top - 4;
+        const mouseX = e.clientX - divRect.left - 4;
 
         cursorRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
     };
@@ -321,54 +325,77 @@ function App() {
 
     return (
         <div className="App">
-            <img className="cursor" src={cursor} alt="" ref={cursorRef} />
+            <img src={bgimg} alt="" className="bg-blur" />
 
-            <img className="background" src={bgimg} alt="" />
+            <div className="chicken-dance" ref={appRef}>
+                <img className="cursor" src={cursor} alt="" ref={cursorRef} />
 
-            <StartScreen setCountdown={setCountdown} bgm={bgm} />
+                <img className="background" src={bgimg} alt="" />
 
-            <div ref={uiRef} className="ui-container none">
-                <img className="ui-img" src={ui} alt="" />
-                <p className="time">{formatTime(time)}</p>
-                <p className="stage">{stage}</p>
-            </div>
+                <StartScreen setCountdown={setCountdown} bgm={bgm} />
 
-            <div className="arrow-container none" ref={arrowRef}>
-                <img src={arrowcontainerleft} alt="" className="arrow-edge" />
-                <div className="arrow-inner">
-                    {arrowPattern.map((arrow, index) => (
-                        <Arrow
-                            key={index}
-                            arrow={arrow}
-                            status={arrowStatus[index]}
-                        />
-                    ))}
+                <div ref={uiRef} className="ui-container none">
+                    <img className="ui-img" src={ui} alt="" />
+                    <p className="time">{formatTime(time)}</p>
+                    <p className="stage">{stage}</p>
                 </div>
-                <img src={arrowcontainerright} alt="" className="arrow-edge" />
+
+                <div className="arrow-container none" ref={arrowRef}>
+                    <img
+                        src={arrowcontainerleft}
+                        alt=""
+                        className="arrow-edge"
+                    />
+                    <div className="arrow-inner">
+                        {arrowPattern.map((arrow, index) => (
+                            <Arrow
+                                key={index}
+                                arrow={arrow}
+                                status={arrowStatus[index]}
+                            />
+                        ))}
+                    </div>
+                    <img
+                        src={arrowcontainerright}
+                        alt=""
+                        className="arrow-edge"
+                    />
+                </div>
+
+                <Result
+                    didClear={didClear}
+                    resultTime={formatTime(resultTime)}
+                    result={result}
+                    stage={stage}
+                    setCountdown={setCountdown}
+                    setResult={setResult}
+                />
+
+                <img src={frito} alt="" className="frito" />
+                {spawnRooster && (
+                    <>
+                        <Rooster isWhite={true} />
+                        <Rooster isWhite={true} />
+                        <Rooster isWhite={true} />
+                        <Rooster isWhite={false} />
+                        <Rooster isWhite={false} />
+                        <Rooster isWhite={false} />
+                    </>
+                )}
+
+                <Start
+                    start={start}
+                    setStart={setStart}
+                    startGame={startGame}
+                />
+                <Clear clear={clear} setClear={setClear} />
+                <Fail fail={fail} setFail={setFail} />
+                <Countdown
+                    countdown={countdown}
+                    setCountdown={setCountdown}
+                    setStart={setStart}
+                />
             </div>
-
-            <Result didClear={didClear} resultTime={formatTime(resultTime)} result={result} stage={stage} setCountdown={setCountdown} setResult={setResult}/>
-
-            <img src={frito} alt="" className="frito" />
-            {spawnRooster && (
-                <>
-                    <Rooster isWhite={true} />
-                    <Rooster isWhite={true} />
-                    <Rooster isWhite={true} />
-                    <Rooster isWhite={false} />
-                    <Rooster isWhite={false} />
-                    <Rooster isWhite={false} />
-                </>
-            )}
-
-            <Start start={start} setStart={setStart} startGame={startGame} />
-            <Clear clear={clear} setClear={setClear} />
-            <Fail fail={fail} setFail={setFail} />
-            <Countdown
-                countdown={countdown}
-                setCountdown={setCountdown}
-                setStart={setStart}
-            />
         </div>
     );
 }
