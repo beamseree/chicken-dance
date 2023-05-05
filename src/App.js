@@ -107,7 +107,7 @@ function App() {
             setSpawnRooster(true);
 
             const timer = setInterval(() => {
-                setTime((prevTime) => prevTime - 7);
+                setTime((prevTime) => prevTime - 10);
                 if (timeRef.current <= 0 && isPlayingRef.current) {
                     clearInterval(timer);
                     setTime(0.0);
