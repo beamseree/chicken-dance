@@ -99,8 +99,17 @@ function App() {
         uiRef.current.classList.remove("hide");
         setSpawnRooster(true);
 
+        const startTime = Date.now();
+        const interval = 10;
+        const initialTime = 60000;
+
+
         const timer = setInterval(() => {
-            setTime((prevTime) => prevTime - 10);
+            const elapsedTime = Date.now() - startTime;
+            const newTime = initialTime - elapsedTime;
+
+            setTime(Math.max(newTime, 0));
+
             if (timeRef.current <= 0 && isPlayingRef.current) {
                 clearInterval(timer);
                 setTime(0.0);
@@ -111,7 +120,7 @@ function App() {
             } else if (resultRef.current) {
                 clearInterval(timer);
             }
-        }, 10);
+        }, interval);
     };
 
     const createArrowPattern = (stage) => {
@@ -201,7 +210,8 @@ function App() {
                 setArrowStatus([]);
                 setStage(stageRef.current);
                 setArrowIndex(0);
-                createArrowPattern(stageRef.current);
+                const temp = arrowPatternRef.current;
+                setArrowPattern(temp);
             }, 150);
         }
     };
