@@ -1,6 +1,6 @@
 import logo from "../img/chickendancelogo.png"
 import bg from "../img/startscreenbg.png"
-import maplelogo from "../img/maplelogo.png"
+import maplelogo from "../img/frittologo1.png"
 
 const StartScreen = (props) => {
 
